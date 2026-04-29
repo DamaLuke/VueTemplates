@@ -1,6 +1,8 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
+import styles from '../styles/components/modal.module.css'
 import ExcelUploader from '../components/ExcelUploader.vue'
+import Buttons from '../components/Buttons.vue'
 
 // ========== Props ==========
 interface UploadItem {
@@ -66,43 +68,52 @@ const handleConfirm = () => {
   emit('confirm', uploadedFiles.value)
   close()
 }
+
+// 动态过渡类名
+const transitionClasses = computed(() => ({
+  enterActiveClass: styles.modalEnterActive,
+  enterFromClass: styles.modalEnterFrom,
+  leaveActiveClass: styles.modalLeaveActive,
+  leaveToClass: styles.modalLeaveTo
+}))
+
+defineExpose({ open, close })
 </script>
 
 <template>
   <div>
     <!-- 触发按钮 -->
-    <button class="trigger-btn" @click="open">{{ buttonText }}</button>
+    <Buttons type="primary" @click="open">{{ buttonText }}</Buttons>
 
     <!-- 弹窗 -->
     <Teleport to="body">
-      <Transition name="modal">
-        <div v-if="isOpen" class="modal-overlay" @click="clickOverlay">
-          <div class="modal-content">
+      <Transition v-bind="transitionClasses">
+        <div v-if="isOpen" :class="styles.overlay" @click="clickOverlay">
+          <div :class="styles.content">
             <!-- 关闭按钮 -->
-            <button class="close-btn" @click="close">✕</button>
+            <button :class="styles.closeBtn" @click="close">✕</button>
 
             <!-- 标题 -->
-            <h2 class="modal-title">{{ title }}</h2>
+            <h2 :class="styles.title">{{ title }}</h2>
 
             <!-- 上传列表 -->
-            <div class="upload-list">
-              <div 
-                v-for="(item, index) in uploadItems" 
+            <div :class="styles.uploadList">
+              <div
+                v-for="(item, index) in uploadItems"
                 :key="index"
-                class="upload-item"
               >
-                <ExcelUploader 
+                <ExcelUploader
                   :hint="item.hint"
                   :accept="item.accept || '.xlsx,.xls'"
-                  @success="(file) => handleFileSuccess(file, index)"
+                  @success="(file: File) => handleFileSuccess(file, index)"
                 />
               </div>
             </div>
 
             <!-- 底部按钮 -->
-            <div class="modal-footer">
-              <button class="btn-cancel" @click="close">{{ cancelText }}</button>
-              <button class="btn-confirm" @click="handleConfirm">{{ confirmText }}</button>
+            <div :class="styles.footer">
+              <button :class="[styles.btnBase, styles.btnCancel]" @click="close">{{ cancelText }}</button>
+              <button :class="[styles.btnBase, styles.btnConfirm]" @click="handleConfirm">{{ confirmText }}</button>
             </div>
           </div>
         </div>
@@ -110,139 +121,3 @@ const handleConfirm = () => {
     </Teleport>
   </div>
 </template>
-
-<style scoped>
-.trigger-btn {
-  padding: 12px 32px;
-  background: #4f49cc;
-  color: rgb(245, 245, 245);
-  border: none;
-  border-radius: 6px;
-  font-size: 16px;
-  cursor: pointer;
-  transition: background 0.3s;
-}
-
-.trigger-btn:hover {
-  background: #66b1ff;
-}
-
-/* 遮罩层 */
-.modal-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
-}
-
-/* 弹窗内容 */
-.modal-content {
-  background: white;
-  border-radius: 12px;
-  padding: 32px;
-  width: 90%;
-  max-width: 500px;
-  max-height: 80vh;
-  overflow-y: auto;
-  position: relative;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-}
-
-.close-btn {
-  position: absolute;
-  top: 16px;
-  right: 16px;
-  width: 32px;
-  height: 32px;
-  border: none;
-  background: transparent;
-  color: #909399;
-  font-size: 20px;
-  cursor: pointer;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.close-btn:hover {
-  background: #f5f7fa;
-  color: #606266;
-}
-
-.modal-title {
-  margin: 0 0 24px 0;
-  color: #303133;
-  font-size: 20px;
-  text-align: center;
-}
-
-.upload-list {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  margin-bottom: 24px;
-}
-
-.modal-footer {
-  display: flex;
-  justify-content: flex-end;
-  gap: 12px;
-  border-top: 1px solid #e4e7ed;
-  padding-top: 20px;
-}
-
-.btn-cancel,
-.btn-confirm {
-  padding: 10px 24px;
-  border-radius: 6px;
-  font-size: 14px;
-  cursor: pointer;
-  transition: all 0.3s;
-}
-
-.btn-cancel {
-  background: white;
-  border: 1px solid #dcdfe6;
-  color: #606266;
-}
-
-.btn-cancel:hover {
-  border-color: #409eff;
-  color: #409eff;
-}
-
-.btn-confirm {
-  background: #409eff;
-  border: none;
-  color: white;
-}
-
-.btn-confirm:hover {
-  background: #66b1ff;
-}
-
-/* 过渡动画 */
-.modal-enter-active,
-.modal-leave-active {
-  transition: opacity 0.3s ease;
-}
-
-.modal-enter-from,
-.modal-leave-to {
-  opacity: 0;
-}
-
-.modal-enter-active .modal-content,
-.modal-leave-active .modal-content {
-  transition: transform 0.3s ease;
-}
-
-.modal-enter-from .modal-content,
-.modal-leave-to .modal-content {
-  transform: scale(0.95);
-}
-</style>

@@ -1,0 +1,132 @@
+/* Modal CSS Module */
+
+.triggerBtn {
+  padding: 12px 32px;
+  background: #4f49cc;
+  color: rgb(245, 245, 245);
+  border: none;
+  border-radius: 6px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.triggerBtn:hover {
+  background: #66b1ff;
+}
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: var(--modal-overlay);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.content {
+  background: var(--modal-bg);
+  border-radius: 12px;
+  padding: 32px;
+  width: 90%;
+  max-width: 500px;
+  max-height: 80vh;
+  overflow-y: auto;
+  position: relative;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+}
+
+.closeBtn {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 32px;
+  height: 32px;
+  border: none;
+  background: transparent;
+  color: #909399;
+  font-size: 20px;
+  cursor: pointer;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.closeBtn:hover {
+  background: var(--modal-close-hover);
+  color: #606266;
+}
+
+.title {
+  margin: 0 0 24px 0;
+  color: var(--modal-title);
+  font-size: 20px;
+  text-align: center;
+}
+
+.uploadList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  border-top: 1px solid var(--modal-border);
+  padding-top: 20px;
+}
+
+.btnBase {
+  padding: 10px 24px;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.btnCancel {
+  background: transparent;
+  border: 1px solid #dcdfe6;
+  color: #606266;
+}
+
+.btnCancel:hover {
+  border-color: var(--btn-primary);
+  color: var(--btn-primary);
+}
+
+.btnConfirm {
+  background: var(--btn-primary);
+  border: none;
+  color: white;
+}
+
+.btnConfirm:hover {
+  background: var(--btn-primary-hover);
+}
+
+/* Transition animations */
+.modalEnterActive,
+.modalLeaveActive {
+  transition: opacity 0.3s ease;
+}
+
+.modalEnterFrom,
+.modalLeaveTo {
+  opacity: 0;
+}
+
+.modalEnterActive .content,
+.modalLeaveActive .content {
+  transition: transform 0.3s ease;
+}
+
+.modalEnterFrom .content,
+.modalLeaveTo .content {
+  transform: scale(0.95);
+}
